@@ -58,10 +58,13 @@ func NewSierpinskiTriangle(width, height, pointCount int) *SierpinskiTriangle {
 	}
 }
 
+// void is used as a placeholder value for the map, so that we can use Go's map as a set.
 type void struct{}
 
 var member void
 
+// Draw is responsible for generating the pixel coordinates of the triangle until a sufficient
+// amount (as specified by the user) has been achieved and then it will set those pixels on the image.
 func (t *SierpinskiTriangle) Draw() {
 	// Create a set so that we only save original points.
 	pixelSet := make(map[image.Point]void)
@@ -94,11 +97,12 @@ func (t *SierpinskiTriangle) Draw() {
 
 	fmt.Println("Finished setting the other points.")
 
-	for point, _ := range pixelSet {
+	for point := range pixelSet {
 		t.Img.Set(point.X, point.Y, color.White)
 	}
 }
 
+// This function takes the name of the file and saves your png using the given file name.
 func (t *SierpinskiTriangle) Save(name string) error {
 	file, err := os.Create(name)
 	if err != nil {
@@ -113,12 +117,21 @@ func (t *SierpinskiTriangle) Save(name string) error {
 	return nil
 }
 
-// I got this function from https://stackoverflow.com/a/2049593
+// This function takes two points and returns a point halfway between the two.
+func midpoint(p1, p2 image.Point) image.Point {
+	return image.Point{X: (p1.X + p2.X) / 2, Y: (p1.Y + p2.Y) / 2}
+}
+
+// I got the following two functions from https://stackoverflow.com/a/2049593
+
+// I have no clue what this function does, but I know it is required to help determine
+// whether a specified point is within the triangle.
 func sign(p1, p2, p3 image.Point) int {
 	return (p1.X-p3.X)*(p2.Y-p3.Y) - (p2.X-p3.X)*(p1.Y-p3.Y)
 }
 
-// I got this function from https://stackoverflow.com/a/2049593
+// Takes a point along with the initial three points of the triangle
+// and returns true or false depending on whether or not the point is within the triangle.
 func pointInTriangle(point, p1, p2, p3 image.Point) bool {
 	var d1, d2, d3 int
 	var hasNeg, hasPos bool
@@ -131,8 +144,4 @@ func pointInTriangle(point, p1, p2, p3 image.Point) bool {
 	hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0)
 
 	return !(hasNeg && hasPos)
-}
-
-func midpoint(p1, p2 image.Point) image.Point {
-	return image.Point{X: (p1.X + p2.X) / 2, Y: (p1.Y + p2.Y) / 2}
 }

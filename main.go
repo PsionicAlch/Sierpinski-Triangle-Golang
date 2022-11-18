@@ -30,7 +30,7 @@ func main() {
 
 	triangle := NewSierpinskiTriangle(width, height, pixelCount)
 	triangle.Draw()
-	if err := triangle.Save("sierpinski.png"); err != nil {
+	if err := triangle.Save("sierpinski_1.png"); err != nil {
 		log.Fatal(err)
 	}
 }
